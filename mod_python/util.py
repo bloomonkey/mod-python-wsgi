@@ -8,7 +8,7 @@ class FieldStorage(object):
         """Constructor.
 
         :arg req: The request object
-        :type req: mod_python_wsgi.request.ModPythonRequestWrapper
+        :type req: mod_python_wsgi.request.ModPythonRequest
         """
         # Parse request parameters into a single data structure
         self._multidict = req.request.params
