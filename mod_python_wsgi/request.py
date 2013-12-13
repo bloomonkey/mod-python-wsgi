@@ -11,6 +11,7 @@ class ModPythonRequest(object):
     def __init__(self, environ):
         self.request = Request(environ, charset='utf8')
         self.response = Response()
+        self.cleanup = self.cleanupData = None
 
     def add_common_vars(self):
         raise NotImplementedError()
@@ -77,8 +78,9 @@ class ModPythonRequest(object):
     def readlines(self, sizehint=-1):
         raise NotImplementedError()
 
-    def register_cleanup(self, callable, data=None):
-        raise NotImplementedError()
+    def register_cleanup(self, callable_, data=None):
+        self.cleanup = callable_
+        self.cleanupData = data
 
     def sendfile(self, path, offset, len_):
         raise NotImplementedError()

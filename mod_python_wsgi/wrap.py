@@ -14,14 +14,19 @@ class ModPythonWSGIApp(object):
 
     def __call__(self, environ, start_response):
         request = ModPythonRequest(environ)
-        retval = self.callable(request)
-        if retval == 1:
-            # Request declined !?
-            request.response.status = "502 Bad Gateway"
-        elif retval:
-            request.response.status_code = retval
-        else:
-            # apache.OK
-            request.response.status = "200 OK"
+        try:
+            retval = self.callable(request)
+            if retval == 1:
+                # Request declined !?
+                request.response.status = "502 Bad Gateway"
+            elif retval:
+                request.response.status_code = retval
+            else:
+                # apache.OK
+                request.response.status = "200 OK"
 
-        return request.response(environ, start_response)
+            return request.response(environ, start_response)
+
+        finally:
+            if request.cleanup is not None:
+                request.cleanup(request.cleanupData)
