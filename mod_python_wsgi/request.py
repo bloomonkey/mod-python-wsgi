@@ -1,4 +1,3 @@
-
 import mod_python.apache
 
 from base64 import b64decode
@@ -82,8 +81,22 @@ class ModPythonRequest(object):
         self.cleanup = callable_
         self.cleanupData = data
 
-    def sendfile(self, path, offset, len_):
-        raise NotImplementedError()
+    def sendfile(self, path, offset=0, len_=-1):
+        with open(path, 'r') as fh:
+            fh.seek(offset)
+            if len_ > -1:
+                self.response.body = fh.read(len_)
+            else:
+                # Attempt to make use of wsgi.file_wrapper
+                try:
+                    wrap = environ['wsgi.file_wrapper']
+                except KeyError:
+                    self.response.app_iter = iter(
+                        lambda: filelike.read(block_size),
+                        ''
+                    )
+                else:
+                    self.response.app_iter = wrap(filelike, block_size)
 
     def send_http_header(self):
         pass
