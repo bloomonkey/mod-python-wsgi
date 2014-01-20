@@ -98,16 +98,7 @@ class ModPythonRequest(object):
                 if len_ > -1:
                     self.response.body = fh.read(len_)
                 else:
-                    # Attempt to make use of wsgi.file_wrapper
-                    try:
-                        wrap = environ['wsgi.file_wrapper']
-                    except KeyError:
-                        self.response.app_iter = iter(
-                            lambda: filelike.read(block_size),
-                            ''
-                        )
-                    else:
-                        self.response.app_iter = wrap(filelike, block_size)
+                    self.response.body = fh.read()
         except IOError:
             self.response.status = "404 Not Found"
 
