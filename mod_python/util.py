@@ -1,5 +1,4 @@
 
-from cgi import FieldStorage as CGIFieldStorage
 from cgi import parse_qs as cgi_parse_qs, parse_qsl as cgi_parse_qsl
 
 
@@ -19,7 +18,7 @@ class StringField(str):
         return self
 
 
-class FieldStorage(CGIFieldStorage):
+class FieldStorage(object):
 
     def __init__(self, req, keep_blank_values=False, strict_parsing=None):
         """Constructor.
@@ -34,27 +33,26 @@ class FieldStorage(CGIFieldStorage):
         # Parse request parameters into a single data structure
         self._multidict = req.request.params
 
-    def get(self, name, default=None):
-        val = self._multidict.get(name, default)
-        if hasattr(val, 'read'):
-            return Field(name, val)
-        elif val is not None:
-            return StringField(val)
+    def __getitem__(self, key):
+        return self._wrap(key, self._multidict.__getitem__(key))
 
-    def getlist(self, name):
-        l = []
-        for val in self._multidict.getall(name):
-            if hasattr(val, 'read'):
-                l.append(Field(name, val))
-            else:
-                l.append(StringField(val))
-        return l
+    def _wrap(self, name, value):
+        if hasattr(value, 'read'):
+            return Field(name, value)
+        elif value is not None:
+            return StringField(value)
 
-    def getfirst(self, name, default=None):
-        return self.get(name, default)
+    def get(self, key, default=None):
+        return self._wrap(key, self._multidict.get(key, default))
 
-    def getvalue(self, name, default=None):
-        val = self.getlist(name)
+    def getlist(self, key):
+        return [self._wrap(key, v) for v in self._multidict.getall(key)]
+
+    def getfirst(self, key, default=None):
+        return self.get(key, default)
+
+    def getvalue(self, key, default=None):
+        val = self.getlist(key)
         if not val:
             return default
         elif len(val) == 1:
