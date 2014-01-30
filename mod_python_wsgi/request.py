@@ -105,6 +105,10 @@ class ModPythonRequest(object):
         pass
 
     @property
+    def subprocess_env(self):
+        return self.request.environ
+
+    @property
     def uri(self):
         return self.request.path
 
