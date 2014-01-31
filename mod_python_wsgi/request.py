@@ -43,9 +43,11 @@ class ModPythonRequest(object):
     def get_basic_auth_pw(self):
         auth = self.request.authorization
         if auth:
-            mechanism, token = auth.strip.split()
+            mechanism, token = auth
+            username, password = b64decode(token).split(':', 1)
+            self.user = username
             if mechanism == 'Basic':
-                return b64decode(token).split(':')[-1]
+                return password
 
     def get_config(self):
         raise NotImplementedError()
@@ -119,6 +121,18 @@ class ModPythonRequest(object):
     @property
     def uri(self):
         return self.request.path
+
+    @property
+    def user(self):
+        return self.request.remote_user
+
+    @user.setter
+    def user(self, username):
+        self.request.remote_user = username
+
+    @user.deleter
+    def user(self):
+        self.request.remote_user = None
 
     def write(self, string, flush=1):
         self.response.app_iter.append(string)
