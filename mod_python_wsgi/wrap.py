@@ -14,6 +14,10 @@ class ModPythonWSGIApp(object):
 
     def __call__(self, environ, start_response):
         request = ModPythonRequest(environ)
+        self.excecute_callable(request)
+        return request.response(environ, start_response)
+
+    def excecute_callable(self, request):
         try:
             retval = self.callable(request)
             if retval == 1:
@@ -24,9 +28,6 @@ class ModPythonWSGIApp(object):
             else:
                 # apache.OK
                 request.response.status = "200 OK"
-
-            return request.response(environ, start_response)
-
         finally:
             if request.cleanup is not None:
                 request.cleanup(request.cleanupData)
