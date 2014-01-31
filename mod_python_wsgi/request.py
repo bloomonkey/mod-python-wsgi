@@ -56,6 +56,14 @@ class ModPythonRequest(object):
     def get_options(self):
         raise NotImplementedError()
 
+    @property
+    def headers_in(self):
+        return self.request.headers
+
+    @property
+    def headers_out(self):
+        return self.response.headers
+
     def internal_redirect(self):
         raise NotImplementedError()
 
