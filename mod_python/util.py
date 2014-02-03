@@ -45,6 +45,7 @@ class FieldStorage(object):
         """
         # Parse request parameters into a single data structure
         self._multidict = req.request.params
+        self.list = [self._wrap(k, v) for k, v in self._multidict.iteritems()]
 
     def __getitem__(self, key):
         return self._wrap(key, self._multidict.__getitem__(key))
