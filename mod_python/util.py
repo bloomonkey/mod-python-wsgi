@@ -53,7 +53,11 @@ class FieldStorage(object):
         if hasattr(value, 'read'):
             return Field(name, value)
         elif value is not None:
-            return StringField(value)
+            f = StringField(value.encode('utf8'))
+        else:
+            f = StringField(None)
+        f.name = name
+        return f
 
     def get(self, key, default=None):
         return self._wrap(key, self._multidict.get(key, default))
