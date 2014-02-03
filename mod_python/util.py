@@ -5,8 +5,21 @@ from cgi import parse_qs as cgi_parse_qs, parse_qsl as cgi_parse_qsl
 class Field(object):
 
     def __init__(self, name, value):
-        raise NotImplementedError()
+        self.name = name
+        self.file = value
 
+    def __del__(self):
+        self.file.close()
+
+    def __getattr__(self, name):
+        if name != 'value':
+            raise AttributeError(name)
+        elif self.file:
+            self.file.seek(0)
+            value = self.file.read()
+            self.file.seek(0)
+
+        return value
 
 class StringField(str):
 
