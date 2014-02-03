@@ -54,10 +54,8 @@ class FieldStorage(object):
             return Field(name, value)
         elif value is not None:
             f = StringField(value.encode('utf8'))
-        else:
-            f = StringField(None)
-        f.name = name
-        return f
+            f.name = name
+            return f
 
     def get(self, key, default=None):
         return self._wrap(key, self._multidict.get(key, default))
