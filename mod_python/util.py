@@ -54,7 +54,10 @@ class FieldStorage(object):
         if hasattr(value, 'read'):
             return Field(name, value)
         elif value is not None:
-            f = StringField(value.encode('utf8'))
+            if isinstance(value, unicode):
+                f = StringField(value.encode('utf8'))
+            else:
+                f = StringField(value)
             f.name = name
             return f
 
