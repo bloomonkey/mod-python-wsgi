@@ -126,7 +126,7 @@ class ModPythonRequest(object):
         self.request.remote_user = None
 
     def write(self, string, flush=1):
-        self.response.app_iter.append(string)
+        self.response.body_file.write(string)
 
     def flush(self):
         pass
