@@ -21,6 +21,7 @@ class Field(object):
 
         return value
 
+
 class StringField(str):
 
     def __init__(self, value):
@@ -53,6 +54,8 @@ class FieldStorage(object):
     def _wrap(self, name, value):
         if hasattr(value, 'read'):
             return Field(name, value)
+        elif hasattr(value, 'file'):
+            return Field(name, value.file)
         elif value is not None:
             if isinstance(value, unicode):
                 f = StringField(value.encode('utf8'))
