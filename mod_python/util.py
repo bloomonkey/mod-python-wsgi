@@ -97,8 +97,8 @@ def parse_qsl(*args):
 def redirect(req, location, permanent=0, text=None):
     req.response.location = location
     if permanent:
-        req.response.status = 301
+        req.response.status_code = 301
     else:
-        req.response.status = 307
+        req.response.status_code = 307
     if text:
         req.response.body = text

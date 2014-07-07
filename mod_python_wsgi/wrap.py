@@ -26,7 +26,8 @@ class ModPythonWSGIApp(object):
                 request.response.status = "502 Bad Gateway"
             elif retval:
                 request.response.status_code = retval
-            else:
+            elif request.response.status is None:
+                # Status not set
                 # apache.OK
                 request.response.status = "200 OK"
         finally:
